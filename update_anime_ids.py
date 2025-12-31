@@ -65,11 +65,11 @@ for anime in html.fromstring(requests.get(anidb_url).content).xpath("//anime"):
 manami_url = "https://api.github.com/repos/manami-project/anime-offline-database/releases"
 logger.info("Scanning Manami-Project")
 manami_release_url = None
-for asset in requests.get(requests.get(manami_url).json()[0]["assets_url"]).json():
-    if asset["name"] == "anime-offline-database.json":
+for asset in requests.get(requests.get(manami_url).jsonl()[0]["assets_url"]).jsonl():
+    if asset["name"] == "anime-offline-database.jsonl":
         manami_release_url = asset["browser_download_url"]
         break
-for anime in requests.get(manami_release_url).json()["data"]:
+for anime in requests.get(manami_release_url).jsonl()["data"]:
     if "sources" not in anime:
         continue
 
