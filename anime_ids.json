@@ -94811,6 +94811,7 @@
   },
   "19788": {
     "tvdb_epoffset": 0,
+    "mal_id": 63216,
     "anilist_id": 204698
   },
   "19789": {
@@ -94855,7 +94856,9 @@
     "tvdb_epoffset": 0
   },
   "19800": {
-    "tvdb_epoffset": 0
+    "tvdb_epoffset": 0,
+    "mal_id": 56640,
+    "anilist_id": 191370
   },
   "19801": {
     "tvdb_epoffset": 0
