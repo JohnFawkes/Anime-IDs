@@ -95931,12 +95931,16 @@
     "tvdb_epoffset": 0
   },
   "19967": {
+    "tvdb_id": 461472,
+    "tvdb_season": 2,
     "tvdb_epoffset": 0
   },
   "19968": {
     "tvdb_epoffset": 0
   },
   "19969": {
+    "tvdb_id": 421069,
+    "tvdb_season": 4,
     "tvdb_epoffset": 0,
     "mal_id": 63794,
     "anilist_id": 209827
@@ -95948,6 +95952,8 @@
     "tvdb_epoffset": 0
   },
   "19972": {
+    "tvdb_id": 451479,
+    "tvdb_season": 3,
     "tvdb_epoffset": 0
   },
   "19973": {
@@ -95966,6 +95972,8 @@
     "tvdb_epoffset": 0
   },
   "19977": {
+    "tvdb_id": 424536,
+    "tvdb_season": 3,
     "tvdb_epoffset": 0
   },
   "19978": {
@@ -95978,6 +95986,8 @@
     "tvdb_epoffset": 0
   },
   "19981": {
+    "tvdb_id": 473974,
+    "tvdb_season": 1,
     "tvdb_epoffset": 0,
     "mal_id": 63476,
     "anilist_id": 207782
