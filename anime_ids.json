@@ -82264,7 +82264,9 @@
     "tvdb_epoffset": 0
   },
   "17186": {
-    "tvdb_epoffset": 0
+    "tvdb_epoffset": 0,
+    "mal_id": 42885,
+    "anilist_id": 147764
   },
   "17187": {
     "tvdb_epoffset": 0,
@@ -94501,7 +94503,6 @@
     "tvdb_id": 468760,
     "tvdb_season": 1,
     "tvdb_epoffset": 0,
-    "mal_id": 62613,
     "anilist_id": 199597
   },
   "19632": {
@@ -94659,8 +94660,7 @@
     "tvdb_id": 469451,
     "tvdb_season": 1,
     "tvdb_epoffset": 0,
-    "mal_id": 62825,
-    "anilist_id": 200769
+    "mal_id": 62825
   },
   "19668": {
     "tvdb_epoffset": 0
@@ -95107,7 +95107,8 @@
   "19765": {
     "tvdb_id": 471609,
     "tvdb_season": 1,
-    "tvdb_epoffset": 0
+    "tvdb_epoffset": 0,
+    "mal_id": 63098
   },
   "19766": {
     "tvdb_epoffset": 0
@@ -95421,8 +95422,7 @@
   },
   "19838": {
     "tvdb_epoffset": 0,
-    "mal_id": 63316,
-    "anilist_id": 184356
+    "mal_id": 63316
   },
   "19839": {
     "tvdb_id": 472832,
@@ -95522,7 +95522,8 @@
     "tvdb_id": 473228,
     "tvdb_season": 1,
     "tvdb_epoffset": 0,
-    "mal_id": 63375
+    "mal_id": 63375,
+    "anilist_id": 206914
   },
   "19862": {
     "tvdb_id": 473229,
@@ -95588,9 +95589,7 @@
     "tvdb_epoffset": 0
   },
   "19875": {
-    "tvdb_epoffset": 0,
-    "mal_id": 62523,
-    "anilist_id": 199008
+    "tvdb_epoffset": 0
   },
   "19876": {
     "tvdb_id": 473460,
@@ -95821,7 +95820,9 @@
     "anilist_id": 202386
   },
   "19932": {
-    "tvdb_epoffset": 0
+    "tvdb_epoffset": 0,
+    "mal_id": 63709,
+    "anilist_id": 209940
   },
   "19933": {
     "tvdb_epoffset": 0,
@@ -95887,7 +95888,8 @@
     "tvdb_epoffset": 0
   },
   "19951": {
-    "tvdb_epoffset": 0
+    "tvdb_epoffset": 0,
+    "mal_id": 63818
   },
   "19952": {
     "tvdb_epoffset": 0,
@@ -95935,7 +95937,9 @@
     "tvdb_epoffset": 0
   },
   "19969": {
-    "tvdb_epoffset": 0
+    "tvdb_epoffset": 0,
+    "mal_id": 63794,
+    "anilist_id": 209827
   },
   "19970": {
     "tvdb_epoffset": 0
@@ -95950,10 +95954,13 @@
     "tvdb_epoffset": 0
   },
   "19974": {
-    "tvdb_epoffset": 0
+    "tvdb_epoffset": 0,
+    "mal_id": 63807,
+    "anilist_id": 209876
   },
   "19975": {
-    "tvdb_epoffset": 0
+    "tvdb_epoffset": 0,
+    "mal_id": 63824
   },
   "19976": {
     "tvdb_epoffset": 0
@@ -95971,7 +95978,9 @@
     "tvdb_epoffset": 0
   },
   "19981": {
-    "tvdb_epoffset": 0
+    "tvdb_epoffset": 0,
+    "mal_id": 63476,
+    "anilist_id": 207782
   },
   "19982": {
     "tvdb_epoffset": 0
