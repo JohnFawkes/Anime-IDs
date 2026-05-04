@@ -93040,6 +93040,8 @@
     "tvdb_epoffset": 0
   },
   "20039": {
-    "tvdb_epoffset": 0
+    "tvdb_id": 305074,
+    "tvdb_season": 0,
+    "tvdb_epoffset": 22
   }
 }
