@@ -92781,6 +92781,8 @@
     "tvdb_epoffset": 0
   },
   "19957": {
+    "tvdb_id": 475739,
+    "tvdb_season": 1,
     "tvdb_epoffset": 0
   },
   "19958": {
@@ -93198,6 +93200,8 @@
     "tvdb_epoffset": 0
   },
   "20086": {
+    "tvdb_id": 479020,
+    "tvdb_season": 1,
     "tvdb_epoffset": 0
   },
   "20087": {
@@ -93213,6 +93217,8 @@
     "tvdb_epoffset": 0
   },
   "20091": {
+    "tvdb_id": 479132,
+    "tvdb_season": 1,
     "tvdb_epoffset": 0
   },
   "20092": {
@@ -93276,12 +93282,16 @@
     "tvdb_epoffset": 0
   },
   "20114": {
+    "tvdb_id": 479426,
+    "tvdb_season": 1,
     "tvdb_epoffset": 0
   },
   "20115": {
     "tvdb_epoffset": 0
   },
   "20117": {
+    "tvdb_id": 466488,
+    "tvdb_season": 2,
     "tvdb_epoffset": 0
   },
   "20118": {
@@ -93294,6 +93304,8 @@
     "tvdb_epoffset": 0
   },
   "20121": {
+    "tvdb_id": 479566,
+    "tvdb_season": 1,
     "tvdb_epoffset": 0
   },
   "20122": {
@@ -93315,6 +93327,8 @@
     "tvdb_epoffset": 0
   },
   "20128": {
+    "tvdb_id": 479657,
+    "tvdb_season": 1,
     "tvdb_epoffset": 0
   },
   "20129": {
