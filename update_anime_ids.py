@@ -1,4 +1,4 @@
-import json, os, sys
+import json, os, sys, time
 from datetime import datetime, UTC
 
 if sys.version_info[0] != 3 or sys.version_info[1] < 11:
@@ -27,6 +27,7 @@ logger.header(args, sub=True)
 logger.separator()
 logger.start()
 
+anime_ids_file = os.path.join(base_dir, "anime_ids.json")
 anime_dicts = {}
 
 logger.info("Scanning Anime-Lists")
@@ -61,92 +62,120 @@ for anime in html.fromstring(requests.get(anidb_url).content).xpath("//anime"):
     if imdb_id.startswith("tt"):
         anime_dicts[anidb_id]["imdb_id"] = imdb_id
 
-
-manami_url = "https://api.github.com/repos/manami-project/anime-offline-database/releases"
-logger.info("Scanning Manami-Project")
-manami_release_url = None
-
-# Find the .jsonl asset
-try:
-    assets = requests.get(requests.get(manami_url).json()[0]["assets_url"]).json()
-    for asset in assets:
-        if asset["name"] == "anime-offline-database.jsonl":
-            manami_release_url = asset["browser_download_url"]
-            break
-except Exception as e:
-    logger.error(f"Error finding Manami release: {e}")
-
-if manami_release_url:
-    # Use iter_lines for .jsonl processing
-    with requests.get(manami_release_url, stream=True) as r:
-        r.raise_for_status()
-        for line in r.iter_lines():
-            if not line:
-                continue
-            
-            try:
-                anime = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-
-            if "sources" not in anime:
-                continue
-
-            anidb_id = None
-            mal_id = None
-            anilist_id = None
-            for source in anime["sources"]:
-                if "anidb.net" in source:
-                    try:
-                        anidb_id = int(source.partition("anime/")[2])
-                    except ValueError: pass
-                elif "myanimelist" in source:
-                    try:
-                        mal_id = int((source.partition("anime/")[2]))
-                    except ValueError: pass
-                elif "anilist.co" in source:
-                    try:
-                        anilist_id = int((source.partition("anime/")[2]))
-                    except ValueError: pass
-            
-            if anidb_id and anidb_id in anime_dicts:
-                if mal_id:
-                    anime_dicts[anidb_id]["mal_id"] = mal_id
-                if anilist_id:
-                    anime_dicts[anidb_id]["anilist_id"] = anilist_id
-else:
-    logger.warning("Could not find anime-offline-database.jsonl in Manami releases")
-
-"""
 logger.info("Scanning AnimeAggregations")
 aggregations_url = "https://raw.githubusercontent.com/notseteve/AnimeAggregations/main/aggregate/AnimeToExternal.json"
 for anidb_id, anime in requests.get(aggregations_url).json()["animes"].items():
     anidb_id = int(anidb_id)
+    resources = anime["resources"]
     if anidb_id not in anime_dicts:
+        if not any(k in resources for k in ["IMDB", "MAL", "TMDB"]):
+            continue
         anime_dicts[anidb_id] = {}
-    if "IMDB" in anime["resources"] and "imdb_id" not in anime_dicts[anidb_id]:
-        anime_dicts[anidb_id]["imdb_id"] = ",".join(anime["resources"]["IMDB"])
-    if "MAL" in anime["resources"] and "mal_id" not in anime_dicts[anidb_id]:
-        anime_dicts[anidb_id]["mal_id"] = int(anime["resources"]["MAL"][0]) if len(anime["resources"]["MAL"]) == 1 else ",".join(anime["resources"]["MAL"])
-    if "TMDB" in anime["resources"]:
-        tmdb_tv_id = next((r for r in anime["resources"]["TMDB"] if r.startswith("tv")), None)
+    if "IMDB" in resources and "imdb_id" not in anime_dicts[anidb_id]:
+        anime_dicts[anidb_id]["imdb_id"] = ",".join(resources["IMDB"])
+    if "MAL" in resources:
+        anime_dicts[anidb_id]["mal_id"] = int(resources["MAL"][0]) if len(resources["MAL"]) == 1 else ",".join(resources["MAL"])
+    if "TMDB" in resources:
+        tmdb_tv_id = next((r for r in resources["TMDB"] if r.startswith("tv")), None)
         if tmdb_tv_id:
             anime_dicts[anidb_id]["tmdb_show_id"] = int(tmdb_tv_id[3:])
         else:
-            tmdb_movie_ids = [r[6:] for r in anime["resources"]["TMDB"] if r.startswith("movie")]
+            tmdb_movie_ids = [r[6:] for r in resources["TMDB"] if r.startswith("movie")]
             anime_dicts[anidb_id]["tmdb_movie_id"] = int(tmdb_movie_ids[0]) if len(tmdb_movie_ids) == 1 else ",".join(tmdb_movie_ids)
-"""
 
 logger.info("Scanning Anime ID Edits")
-with open("anime_id_edits.json", "r") as f:
+edited_anilist_ids = set()
+with open(os.path.join(base_dir, "anime_id_edits.json"), "r") as f:
     for anidb_id, ids in json.load(f).items():
         anidb_id = int(anidb_id)
         if anidb_id in anime_dicts:
             for attr in ["tvdb_id", "mal_id", "anilist_id", "imdb_id", "tmdb_show_id", "tmdb_movie_id"]:
                 if attr in ids:
                     anime_dicts[anidb_id][attr] = ids[attr]
+            if "anilist_id" in ids:
+                edited_anilist_ids.add(anidb_id)
 
-with open("anime_ids.json", "w") as write:
+
+def split_ids(value):
+    return [i.strip() for i in str(value).split(",") if i.strip().isdigit()]
+
+
+logger.info("Scanning AniList")
+anilist_url = "https://graphql.anilist.co"
+anilist_query = """
+query ($mal_ids: [Int]) {
+  Page(page: 1, perPage: 50) {
+    media(idMal_in: $mal_ids, type: ANIME) {
+      id
+      idMal
+    }
+  }
+}
+"""
+
+# AniList only exposes the MyAnimeList ID it is mapped to, so the previous run's
+# output doubles as the MyAnimeList ID -> AniList ID cache. Without it every run
+# would have to re-query all ~15,000 IDs against a 30 request per minute limit.
+anilist_ids = {}
+if os.path.exists(anime_ids_file):
+    with open(anime_ids_file, "r") as f:
+        for ids in json.load(f).values():
+            if "mal_id" not in ids or "anilist_id" not in ids:
+                continue
+            cached_mal_ids = split_ids(ids["mal_id"])
+            cached_anilist_ids = split_ids(ids["anilist_id"])
+            if len(cached_mal_ids) != len(cached_anilist_ids):
+                continue
+            for mal_id, anilist_id in zip(cached_mal_ids, cached_anilist_ids):
+                anilist_ids[int(mal_id)] = int(anilist_id)
+logger.info(f"{len(anilist_ids)} MyAnimeList IDs cached from the previous run")
+
+lookup_ids = sorted({
+    int(mal_id)
+    for ids in anime_dicts.values() if "mal_id" in ids
+    for mal_id in split_ids(ids["mal_id"]) if int(mal_id) not in anilist_ids
+})
+logger.info(f"{len(lookup_ids)} MyAnimeList IDs to look up on AniList")
+
+for i in range(0, len(lookup_ids), 50):
+    batch = lookup_ids[i:i + 50]
+    response = None
+    for attempt in range(1, 6):
+        try:
+            response = requests.post(anilist_url, json={"query": anilist_query, "variables": {"mal_ids": batch}})
+            if response.status_code == 429:
+                wait = int(response.headers.get("Retry-After", 60)) + 1
+                logger.warning(f"AniList Rate Limit Reached: Waiting {wait} seconds")
+                time.sleep(wait)
+                response = None
+                continue
+            response.raise_for_status()
+            break
+        except requests.RequestException as e:
+            logger.warning(f"AniList Request Failed (Attempt {attempt}/5): {e}")
+            response = None
+            time.sleep(attempt * 5)
+    if response is None:
+        logger.error(f"AniList Error: Skipping MyAnimeList IDs {batch[0]}-{batch[-1]}")
+        continue
+    for media in response.json()["data"]["Page"]["media"]:
+        if media["idMal"]:
+            anilist_ids[int(media["idMal"])] = int(media["id"])
+    looked_up = min(i + 50, len(lookup_ids))
+    if looked_up % 1000 < 50 or looked_up == len(lookup_ids):
+        logger.info(f"Looked up {looked_up}/{len(lookup_ids)} MyAnimeList IDs")
+    if int(response.headers.get("X-RateLimit-Remaining", 1) or 0) < 1:
+        logger.info("AniList Rate Limit Reached: Waiting 61 seconds")
+        time.sleep(61)
+
+for anidb_id, ids in anime_dicts.items():
+    if "mal_id" not in ids or anidb_id in edited_anilist_ids:
+        continue
+    found_ids = [anilist_ids[int(mal_id)] for mal_id in split_ids(ids["mal_id"]) if int(mal_id) in anilist_ids]
+    if found_ids:
+        ids["anilist_id"] = found_ids[0] if len(found_ids) == 1 else ",".join(str(i) for i in found_ids)
+
+with open(anime_ids_file, "w") as write:
     json.dump(anime_dicts, write, indent=2)
 
 logger.separator()
