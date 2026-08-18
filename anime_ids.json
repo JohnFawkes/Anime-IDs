@@ -31850,8 +31850,8 @@
     "tvdb_id": 79414,
     "tvdb_season": 1,
     "tvdb_epoffset": 0,
-    "mal_id": 4382,
-    "anilist_id": 4382
+    "mal_id": "849,4382",
+    "anilist_id": "849,4382"
   },
   "6368": {
     "tvdb_epoffset": 0,
