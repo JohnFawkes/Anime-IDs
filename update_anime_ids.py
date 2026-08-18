@@ -8,7 +8,6 @@ if sys.version_info[0] != 3 or sys.version_info[1] < 11:
 try:
     import requests
     from git import Repo
-    from lxml import html
     from kometautils import KometaArgs, KometaLogger
 except (ModuleNotFoundError, ImportError):
     print("Requirements Error: Requirements are not installed")
@@ -29,116 +28,76 @@ logger.start()
 
 anime_dicts = {}
 
-logger.info("Scanning Anime-Lists")
-anidb_url = "https://raw.githubusercontent.com/Anime-Lists/anime-lists/master/anime-list-master.xml"
-for anime in html.fromstring(requests.get(anidb_url).content).xpath("//anime"):
-    anidb_id = str(anime.xpath("@anidbid")[0])
-    if not anidb_id:
+logger.info("Scanning AnimeMap")
+animemap_url = "https://mapping.animemap.dev/api/v1/export.json"
+response = requests.get(animemap_url)
+response.raise_for_status()
+export = response.json()
+logger.info(f"AnimeMap Export Generated At: {export['generated_at']}")
+logger.info(f"AnimeMap Entries: {export['count']}")
+
+# AnimeMap is keyed on AniList ID while anime_ids.json is keyed on AniDB ID, and
+# several AniList entries can share one AniDB ID, so the entries are grouped
+# before anything is written out.
+anidb_groups = {}
+for entry in sorted(export["entries"], key=lambda e: e["anilist_id"]):
+    anidb = entry["anidb"]
+    if not anidb or anidb.get("id") is None:
         continue
-    anidb_id = int(anidb_id[1:]) if anidb_id[0] == "a" else int(anidb_id)
-    if anidb_id not in anime_dicts:
-        anime_dicts[anidb_id] = {}
-    tvdb_id = str(anime.xpath("@tvdbid")[0])
-    try:
-        if tvdb_id:
-            anime_dicts[anidb_id]["tvdb_id"] = int(tvdb_id)
-    except ValueError:
-        pass
-    tvdb_season = str(anime.xpath("@defaulttvdbseason")[0])
-    if tvdb_season == "a":
-        tvdb_season = "-1"
-    try:
-        if tvdb_season:
-            anime_dicts[anidb_id]["tvdb_season"] = int(tvdb_season)
-    except ValueError:
-        pass
-    try:
-        anime_dicts[anidb_id]["tvdb_epoffset"] = int(str(anime.xpath("@episodeoffset")[0]))
-    except ValueError:
-        anime_dicts[anidb_id]["tvdb_epoffset"] = 0
-
-    imdb_id = str(anime.xpath("@imdbid")[0])
-    if imdb_id.startswith("tt"):
-        anime_dicts[anidb_id]["imdb_id"] = imdb_id
+    anidb_groups.setdefault(int(anidb["id"]), []).append(entry)
+logger.info(f"{len(anidb_groups)} AniDB IDs mapped")
 
 
-manami_url = "https://api.github.com/repos/manami-project/anime-offline-database/releases"
-logger.info("Scanning Manami-Project")
-manami_release_url = None
+def resource_id(entry, source):
+    resource = entry[source]
+    return resource["id"] if resource and resource.get("id") is not None else None
 
-# Find the .jsonl asset
-try:
-    assets = requests.get(requests.get(manami_url).json()[0]["assets_url"]).json()
-    for asset in assets:
-        if asset["name"] == "anime-offline-database.jsonl":
-            manami_release_url = asset["browser_download_url"]
-            break
-except Exception as e:
-    logger.error(f"Error finding Manami release: {e}")
 
-if manami_release_url:
-    # Use iter_lines for .jsonl processing
-    with requests.get(manami_release_url, stream=True) as r:
-        r.raise_for_status()
-        for line in r.iter_lines():
-            if not line:
-                continue
-            
-            try:
-                anime = json.loads(line)
-            except json.JSONDecodeError:
-                continue
+def join_ids(values):
+    found = []
+    for value in values:
+        if value is not None and value not in found:
+            found.append(value)
+    if not found:
+        return None
+    return found[0] if len(found) == 1 else ",".join(str(value) for value in found)
 
-            if "sources" not in anime:
-                continue
 
-            anidb_id = None
-            mal_id = None
-            anilist_id = None
-            for source in anime["sources"]:
-                if "anidb.net" in source:
-                    try:
-                        anidb_id = int(source.partition("anime/")[2])
-                    except ValueError: pass
-                elif "myanimelist" in source:
-                    try:
-                        mal_id = int((source.partition("anime/")[2]))
-                    except ValueError: pass
-                elif "anilist.co" in source:
-                    try:
-                        anilist_id = int((source.partition("anime/")[2]))
-                    except ValueError: pass
-            
-            if anidb_id and anidb_id in anime_dicts:
-                if mal_id:
-                    anime_dicts[anidb_id]["mal_id"] = mal_id
-                if anilist_id:
-                    anime_dicts[anidb_id]["anilist_id"] = anilist_id
-else:
-    logger.warning("Could not find anime-offline-database.jsonl in Manami releases")
+for anidb_id, group in sorted(anidb_groups.items()):
+    ids = {}
 
-"""
-logger.info("Scanning AnimeAggregations")
-aggregations_url = "https://raw.githubusercontent.com/notseteve/AnimeAggregations/main/aggregate/AnimeToExternal.json"
-for anidb_id, anime in requests.get(aggregations_url).json()["animes"].items():
-    anidb_id = int(anidb_id)
-    if anidb_id not in anime_dicts:
-        anime_dicts[anidb_id] = {}
-    if "IMDB" in anime["resources"] and "imdb_id" not in anime_dicts[anidb_id]:
-        anime_dicts[anidb_id]["imdb_id"] = ",".join(anime["resources"]["IMDB"])
-    if "MAL" in anime["resources"] and "mal_id" not in anime_dicts[anidb_id]:
-        anime_dicts[anidb_id]["mal_id"] = int(anime["resources"]["MAL"][0]) if len(anime["resources"]["MAL"]) == 1 else ",".join(anime["resources"]["MAL"])
-    if "TMDB" in anime["resources"]:
-        tmdb_tv_id = next((r for r in anime["resources"]["TMDB"] if r.startswith("tv")), None)
-        if tmdb_tv_id:
-            anime_dicts[anidb_id]["tmdb_show_id"] = int(tmdb_tv_id[3:])
-        else:
-            tmdb_movie_ids = [r[6:] for r in anime["resources"]["TMDB"] if r.startswith("movie")]
-            anime_dicts[anidb_id]["tmdb_movie_id"] = int(tmdb_movie_ids[0]) if len(tmdb_movie_ids) == 1 else ",".join(tmdb_movie_ids)
-"""
+    tvdb = next((entry["tvdb"] for entry in group if resource_id(entry, "tvdb") is not None), None)
+    if tvdb:
+        ids["tvdb_id"] = int(tvdb["id"])
+        tvdb_season = tvdb.get("season")
+        if tvdb_season is not None:
+            ids["tvdb_season"] = -1 if str(tvdb_season) == "a" else int(tvdb_season)
+    ids["tvdb_epoffset"] = int(tvdb["episode_offset"] or 0) if tvdb else 0
+
+    imdb_id = join_ids([resource_id(entry, "imdb") for entry in group])
+    if imdb_id is not None:
+        ids["imdb_id"] = imdb_id
+
+    mal_id = join_ids([resource_id(entry, "mal") for entry in group])
+    if mal_id is not None:
+        ids["mal_id"] = mal_id
+
+    anilist_id = join_ids([entry["anilist_id"] for entry in group])
+    if anilist_id is not None:
+        ids["anilist_id"] = anilist_id
+
+    tmdb_show_id = join_ids([resource_id(entry, "tmdb") for entry in group if entry["tmdb"] and entry["tmdb"].get("media_type") == "tv"])
+    if tmdb_show_id is not None:
+        ids["tmdb_show_id"] = tmdb_show_id
+
+    tmdb_movie_id = join_ids([resource_id(entry, "tmdb") for entry in group if entry["tmdb"] and entry["tmdb"].get("media_type") == "movie"])
+    if tmdb_movie_id is not None:
+        ids["tmdb_movie_id"] = tmdb_movie_id
+
+    anime_dicts[anidb_id] = ids
 
 logger.info("Scanning Anime ID Edits")
-with open("anime_id_edits.json", "r") as f:
+with open(os.path.join(base_dir, "anime_id_edits.json"), "r") as f:
     for anidb_id, ids in json.load(f).items():
         anidb_id = int(anidb_id)
         if anidb_id in anime_dicts:
@@ -146,7 +105,7 @@ with open("anime_id_edits.json", "r") as f:
                 if attr in ids:
                     anime_dicts[anidb_id][attr] = ids[attr]
 
-with open("anime_ids.json", "w") as write:
+with open(os.path.join(base_dir, "anime_ids.json"), "w") as write:
     json.dump(anime_dicts, write, indent=2)
 
 logger.separator()
