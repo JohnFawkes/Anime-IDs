@@ -16,7 +16,9 @@ except (ModuleNotFoundError, ImportError):
 
 options = [
     {"arg": "tr", "key": "trace",        "env": "TRACE",        "type": "bool", "default": False, "help": "Run with extra trace logs."},
-    {"arg": "lr", "key": "log-requests", "env": "LOG_REQUESTS", "type": "bool", "default": False, "help": "Run with every request logged."}
+    {"arg": "lr", "key": "log-requests", "env": "LOG_REQUESTS", "type": "bool", "default": False, "help": "Run with every request logged."},
+    {"arg": "fb", "key": "fresh-build",  "env": "FRESH_BUILD",  "type": "bool", "default": False, "help": "Ignore the existing anime_ids.json and look every AniList ID up again."},
+    {"arg": "ie", "key": "ignore-edits", "env": "IGNORE_EDITS", "type": "bool", "default": False, "help": "Ignore anime_id_edits.json so the output is only what the sources produce."}
 ]
 script_name = "Anime IDs"
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -193,7 +195,9 @@ query ($mal_ids: [Int]) {
 # to, so the previous run's output doubles as the MyAnimeList ID -> AniList ID
 # cache to stay well inside a 30 request per minute limit.
 anilist_ids = {}
-if os.path.exists(anime_ids_file):
+if args["fresh-build"]:
+    logger.info("Fresh Build: Ignoring the cached MyAnimeList IDs from the previous run")
+elif os.path.exists(anime_ids_file):
     with open(anime_ids_file, "r") as f:
         for ids in json.load(f).values():
             if "mal_id" not in ids or "anilist_id" not in ids:
@@ -253,14 +257,17 @@ for anidb_id in sorted(fallback_dicts):
     if anilist_id is not None:
         ids["anilist_id"] = anilist_id
 
-logger.info("Scanning Anime ID Edits")
-with open(os.path.join(base_dir, "anime_id_edits.json"), "r") as f:
-    for anidb_id, ids in json.load(f).items():
-        anidb_id = int(anidb_id)
-        if anidb_id in anime_dicts:
-            for attr in ["tvdb_id", "mal_id", "anilist_id", "imdb_id", "tmdb_show_id", "tmdb_movie_id"]:
-                if attr in ids:
-                    anime_dicts[anidb_id][attr] = ids[attr]
+if args["ignore-edits"]:
+    logger.info("Ignoring Anime ID Edits")
+else:
+    logger.info("Scanning Anime ID Edits")
+    with open(os.path.join(base_dir, "anime_id_edits.json"), "r") as f:
+        for anidb_id, ids in json.load(f).items():
+            anidb_id = int(anidb_id)
+            if anidb_id in anime_dicts:
+                for attr in ["tvdb_id", "mal_id", "anilist_id", "imdb_id", "tmdb_show_id", "tmdb_movie_id"]:
+                    if attr in ids:
+                        anime_dicts[anidb_id][attr] = ids[attr]
 
 with open(anime_ids_file, "w") as write:
     json.dump({anidb_id: anime_dicts[anidb_id] for anidb_id in sorted(anime_dicts)}, write, indent=2)

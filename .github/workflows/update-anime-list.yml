@@ -4,6 +4,15 @@ on:
   schedule:
     - cron: '0 */6 * * *'
   workflow_dispatch:
+    inputs:
+      fresh_build:
+        description: 'Delete anime_ids.json first so the run rebuilds the whole file from the sources'
+        type: boolean
+        default: false
+      ignore_edits:
+        description: 'Ignore anime_id_edits.json so the output is only what the sources produce (not committed)'
+        type: boolean
+        default: false
   push:
   pull_request:
 
@@ -29,8 +38,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Delete anime_ids.json
+        if: inputs.fresh_build == true
+        run: rm -f anime_ids.json
+
       - name: Run Update Anime IDs
         run: python update_anime_ids.py
+        env:
+          FRESH_BUILD: ${{ inputs.fresh_build }}
+          IGNORE_EDITS: ${{ inputs.ignore_edits }}
+
+      - name: Upload anime_ids.json
+        if: inputs.fresh_build == true || inputs.ignore_edits == true
+        uses: actions/upload-artifact@v4
+        with:
+          name: anime_ids
+          path: anime_ids.json
 
       - name: Check Diff
         id: verify_diff
@@ -38,7 +61,7 @@ jobs:
           git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit & Push Changes
-        if: steps.verify_diff.outputs.changed == 'true'
+        if: steps.verify_diff.outputs.changed == 'true' && inputs.ignore_edits != true
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
