@@ -64,7 +64,7 @@ jobs:
           git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit & Push Changes
-        if: steps.verify_diff.outputs.changed == 'true' && inputs.fresh_build != true && inputs.ignore_edits != true
+        if: steps.verify_diff.outputs.changed == 'true' && github.ref == 'refs/heads/master' && inputs.fresh_build != true && inputs.ignore_edits != true
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
