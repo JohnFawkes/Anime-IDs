@@ -1543,8 +1543,7 @@
     "tvdb_id": 76932,
     "tvdb_season": 2,
     "tvdb_epoffset": 0,
-    "anilist_id": 149939,
-    "mal_id": 210
+    "anilist_id": 149939
   },
   "194": {
     "tvdb_id": 196721,
@@ -4669,7 +4668,8 @@
   },
   "598": {
     "tvdb_id": 74544,
-    "tvdb_epoffset": 0,
+    "tvdb_season": 0,
+    "tvdb_epoffset": -7,
     "imdb_id": "tt1820943",
     "mal_id": 259,
     "anilist_id": 259,
@@ -30874,7 +30874,7 @@
     "imdb_id": "tt33038562",
     "mal_id": 3711,
     "anilist_id": 3711,
-    "tmdb_show_id": 297053
+    "tmdb_show_id": 69100
   },
   "5364": {
     "tvdb_epoffset": 0,
@@ -31668,7 +31668,7 @@
     "tvdb_epoffset": 0,
     "mal_id": 3918,
     "anilist_id": 3918,
-    "tmdb_show_id": 298432
+    "tmdb_show_id": 92929
   },
   "5544": {
     "tvdb_id": 81490,
@@ -31764,7 +31764,7 @@
     "tvdb_id": 81983,
     "tvdb_season": 2,
     "tvdb_epoffset": 0,
-    "imdb_id": "tt1727475",
+    "imdb_id": "tt0990310",
     "mal_id": 3501,
     "anilist_id": 3501
   },
@@ -35055,7 +35055,7 @@
     "tvdb_id": 79414,
     "tvdb_season": 1,
     "tvdb_epoffset": 0,
-    "mal_id": "849,4382",
+    "mal_id": 4382,
     "anilist_id": 4382
   },
   "6368": {
@@ -44171,8 +44171,7 @@
     "tvdb_id": 79481,
     "tvdb_season": 0,
     "tvdb_epoffset": 0,
-    "tmdb_movie_id": 68555,
-    "mal_id": 2994
+    "tmdb_movie_id": 68555
   },
   "8148": {
     "tvdb_id": 248035,
@@ -52999,7 +52998,7 @@
     "tvdb_id": 267440,
     "tvdb_season": 0,
     "tvdb_epoffset": 0,
-    "mal_id": "18397,25781,36106",
+    "mal_id": 36106,
     "anilist_id": 99634
   },
   "9828": {
@@ -53867,7 +53866,7 @@
     "tvdb_season": 0,
     "tvdb_epoffset": 5,
     "imdb_id": "tt3971764,tt4971484,tt5463088",
-    "mal_id": "19613,28881,30952,50846",
+    "mal_id": "19613,28881,30952",
     "anilist_id": "20842,20990,21289"
   },
   "9988": {
@@ -62423,7 +62422,7 @@
     "tvdb_season": 0,
     "tvdb_epoffset": 24,
     "imdb_id": "tt6597832",
-    "mal_id": "32869,32870,32871",
+    "mal_id": 32869,
     "anilist_id": 102093,
     "tmdb_movie_id": 401043
   },
