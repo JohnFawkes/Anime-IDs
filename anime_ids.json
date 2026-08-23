@@ -77140,9 +77140,6 @@
     "tvdb_epoffset": 0,
     "mal_id": 53432
   },
-  "16709": {
-    "tvdb_epoffset": 0
-  },
   "16710": {
     "tvdb_epoffset": 0
   },
@@ -93917,6 +93914,63 @@
     "tvdb_epoffset": 0
   },
   "20266": {
+    "tvdb_epoffset": 0
+  },
+  "20267": {
+    "tvdb_epoffset": 0
+  },
+  "20268": {
+    "tvdb_epoffset": 0
+  },
+  "20269": {
+    "tvdb_epoffset": 0
+  },
+  "20270": {
+    "tvdb_epoffset": 0
+  },
+  "20271": {
+    "tvdb_epoffset": 0
+  },
+  "20272": {
+    "tvdb_epoffset": 0
+  },
+  "20273": {
+    "tvdb_epoffset": 0
+  },
+  "20274": {
+    "tvdb_epoffset": 0
+  },
+  "20275": {
+    "tvdb_epoffset": 0
+  },
+  "20276": {
+    "tvdb_epoffset": 0
+  },
+  "20277": {
+    "tvdb_epoffset": 0
+  },
+  "20278": {
+    "tvdb_epoffset": 0
+  },
+  "20279": {
+    "tvdb_epoffset": 0
+  },
+  "20280": {
+    "tvdb_epoffset": 0
+  },
+  "20281": {
+    "tvdb_epoffset": 0
+  },
+  "20282": {
+    "tvdb_epoffset": 0
+  },
+  "20284": {
+    "tvdb_epoffset": 0
+  },
+  "20285": {
+    "tvdb_epoffset": 0
+  },
+  "20286": {
     "tvdb_epoffset": 0
   }
 }
