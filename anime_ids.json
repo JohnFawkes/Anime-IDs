@@ -49451,8 +49451,8 @@
     "tvdb_season": 0,
     "tvdb_epoffset": 0,
     "imdb_id": "tt2375379",
-    "mal_id": "12859,64858",
-    "anilist_id": "12859,215855",
+    "mal_id": 12859,
+    "anilist_id": 12859,
     "tmdb_movie_id": 176983
   },
   "8941": {
@@ -112390,5 +112390,16 @@
   },
   "20286": {
     "tvdb_epoffset": 0
+  },
+  "20290": {
+    "tvdb_id": 81797,
+    "tvdb_epoffset": 0,
+    "mal_id": 64858,
+    "anilist_id": 215855
+  },
+  "20292": {
+    "tvdb_epoffset": 0,
+    "mal_id": 62251,
+    "anilist_id": 106504
   }
 }
