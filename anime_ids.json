@@ -78831,6 +78831,7 @@
   },
   "14070": {
     "tvdb_epoffset": 0,
+    "imdb_id": "tt44923031",
     "mal_id": 37827,
     "anilist_id": 213101,
     "tmdb_movie_id": 1323653
@@ -111895,7 +111896,8 @@
     "tvdb_epoffset": 0,
     "imdb_id": "tt43119470",
     "mal_id": 63337,
-    "anilist_id": 206401
+    "anilist_id": 206401,
+    "tmdb_show_id": 311842
   },
   "19849": {
     "tvdb_id": 473018,
