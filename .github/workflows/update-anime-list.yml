@@ -48,6 +48,7 @@ jobs:
       - name: Run Update Anime IDs
         run: python update_anime_ids.py
         env:
+          ANIMEMAP_API_KEY: ${{ secrets.ANIMEMAP_API_KEY }}
           FRESH_BUILD: ${{ inputs.fresh_build }}
           IGNORE_EDITS: ${{ inputs.ignore_edits }}
 

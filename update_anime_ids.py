@@ -59,7 +59,21 @@ def claim(attr, values):
 
 logger.info("Scanning AnimeMap")
 animemap_url = "https://mapping.animemap.dev/api/v1/export.json"
-response = requests.get(animemap_url)
+
+# Read the key straight from the environment instead of adding it to options:
+# logger.header debug-logs every option's value and the full run command, so a
+# key routed through KometaArgs would end up in the logs on a trace run.
+animemap_apikey = os.environ.get("ANIMEMAP_API_KEY", "").strip()
+if not animemap_apikey:
+    logger.error("AnimeMap Error: ANIMEMAP_API_KEY is not set")
+    logger.error("The AnimeMap export requires an API key. Create one at POST /api/v1/auth/keys on")
+    logger.error("mapping.animemap.dev and set it as the ANIMEMAP_API_KEY secret or environment variable.")
+    sys.exit(1)
+
+response = requests.get(animemap_url, headers={"X-API-Key": animemap_apikey})
+if response.status_code in [401, 403]:
+    logger.error(f"AnimeMap Error: ANIMEMAP_API_KEY was rejected ({response.status_code} {response.reason})")
+    sys.exit(1)
 response.raise_for_status()
 export = response.json()
 logger.info(f"AnimeMap Export Generated At: {export['generated_at']}")
