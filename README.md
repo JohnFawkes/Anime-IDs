@@ -34,10 +34,12 @@ This is an example mapping entry you would find in the [anime_ids.json](https://
 ## Source Lists
 
 The source lists used to autogenerate `anime_ids.json` are below.
-1. [AnimeMap](https://mapping.animemap.dev) maps AniList IDs to AniDB IDs, MyAnimeList IDs, TVDb IDs, TMDb IDs, and IMDb IDs. ([Raw List](https://mapping.animemap.dev/api/v1/export.json))
+1. [AnimeMap](https://mapping.animemap.dev) maps AniList IDs to AniDB IDs, MyAnimeList IDs, TVDb IDs, TMDb IDs, and IMDb IDs. ([Raw List](https://mapping.animemap.dev/api/v1/export.json)) **Requires an API key.**
 2. [Anime-Lists/anime-lists](https://github.com/Anime-Lists/anime-lists/) maps AniDB IDs to TVDb Series IDs and IMDb IDs. ([Raw List](https://raw.githubusercontent.com/Anime-Lists/anime-lists/master/anime-list-master.xml))
 3. [notseteve/AnimeAggregations](https://github.com/notseteve/AnimeAggregations) parses data from the AniDB site and maps the links there to TMDb IDs, IMDb IDs, and MyAnimeList IDs. ([Raw List](https://raw.githubusercontent.com/notseteve/AnimeAggregations/main/aggregate/AnimeToExternal.json))
 4. The [AniList API](https://docs.anilist.co/) maps MyAnimeList IDs that came from AnimeAggregations to their AniList ID.
+
+The AnimeMap export requires an API key. Create one at `POST /api/v1/auth/keys` on [mapping.animemap.dev](https://mapping.animemap.dev) and set it as the `ANIMEMAP_API_KEY` repository secret, which the workflow passes to the script. To run the script yourself, set `ANIMEMAP_API_KEY` in your environment. The run stops before writing anything if the key is missing or rejected, so a bad key can't overwrite `anime_ids.json` with a partial list.
 
 **AnimeMap is the authority for every ID it has.** It is keyed on AniList ID rather than AniDB ID, so only its entries with a matched AniDB ID can appear here, and where several AniList entries share one AniDB ID their IDs are combined into a comma-separated value.
 
