@@ -115192,6 +115192,11 @@
     "anilist_id": 216860
   },
   "20452": {
-    "tvdb_epoffset": 0
+    "tvdb_id": 483316,
+    "tvdb_epoffset": 0,
+    "imdb_id": "tt44923712",
+    "mal_id": 64211,
+    "anilist_id": 217787,
+    "tmdb_show_id": 315682
   }
 }
