@@ -19854,11 +19854,13 @@
     "tmdb_show_id": 10085
   },
   "2807": {
-    "tvdb_id": 80056,
+    "tvdb_id": 396336,
     "tvdb_season": 2,
     "tvdb_epoffset": 0,
+    "imdb_id": "tt0991058",
     "mal_id": 2308,
-    "anilist_id": 2308
+    "anilist_id": 2308,
+    "tmdb_show_id": 129457
   },
   "2808": {
     "tvdb_id": 156221,
