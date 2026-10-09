@@ -13755,8 +13755,7 @@
     "tvdb_epoffset": 0,
     "imdb_id": "tt0288961",
     "mal_id": 3285,
-    "anilist_id": 3285,
-    "tmdb_show_id": 102754
+    "anilist_id": 3285
   },
   "1894": {
     "tvdb_id": 282607,
@@ -13765,7 +13764,7 @@
     "imdb_id": "tt0288961",
     "mal_id": 3838,
     "anilist_id": 3838,
-    "tmdb_show_id": 102754
+    "tmdb_show_id": 56442
   },
   "1895": {
     "tvdb_epoffset": 0,
@@ -112250,6 +112249,7 @@
     "tvdb_id": 471316,
     "tvdb_season": 1,
     "tvdb_epoffset": 0,
+    "imdb_id": "tt48391033",
     "mal_id": 63053,
     "anilist_id": 203473,
     "tmdb_show_id": 307903
@@ -112714,7 +112714,8 @@
     "tvdb_season": 1,
     "tvdb_epoffset": 0,
     "mal_id": 63350,
-    "anilist_id": 206798
+    "anilist_id": 206798,
+    "tmdb_show_id": 312047
   },
   "19840": {
     "tvdb_epoffset": 0,
