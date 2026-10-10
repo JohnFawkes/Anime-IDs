@@ -110624,6 +110624,7 @@
     "anilist_id": 183651
   },
   "18958": {
+    "tvdb_id": 377267,
     "tvdb_epoffset": 0,
     "imdb_id": "tt34424243",
     "mal_id": 60230,
@@ -116810,8 +116811,6 @@
   },
   "19995": {
     "tvdb_epoffset": 0,
-    "mal_id": 64053,
-    "tmdb_show_id": 318800,
     "anilist_id": 198044
   },
   "19996": {
