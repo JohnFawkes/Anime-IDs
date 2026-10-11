@@ -76993,8 +76993,7 @@
   "13318": {
     "tvdb_epoffset": 0,
     "mal_id": 35617,
-    "anilist_id": 132523,
-    "tmdb_show_id": 22517
+    "anilist_id": 132523
   },
   "13320": {
     "tvdb_epoffset": 0,
@@ -92117,7 +92116,8 @@
     "imdb_id": "tt13398930,tt1430628",
     "mal_id": 43735,
     "anilist_id": "125682,200639",
-    "tmdb_show_id": 112463
+    "tmdb_show_id": 112463,
+    "tmdb_movie_id": 1584356
   },
   "15828": {
     "tvdb_id": 402005,
@@ -115723,6 +115723,7 @@
   },
   "19799": {
     "tvdb_epoffset": 0,
+    "imdb_id": "tt4508902",
     "mal_id": 63193,
     "anilist_id": 204747
   },
